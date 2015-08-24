@@ -22,6 +22,7 @@ var mongoose   = require('mongoose');
 mongoose.connect('mongodb://localhost/restFullRemindsEnglish'); // connect to our database
 
 var Bear     = require('./app/models/bear');
+var VerboIrregular     = require('./app/models/verboirregular');
 
 // ROUTES FOR OUR API
 // =============================================================================
@@ -36,35 +37,29 @@ router.use(function(req, res, next) {
 	next();
 });
 
+
+
 // test route to make sure everything is working (accessed at GET http://localhost:8080/api)
 router.get('/', function(req, res) {
-	res.jsonp(
-{
-			            	    "items": [{
-			            	                  "ingles": "became",
-			            	                  "espanol": "llegar a ser"
-			            	              },
-			            	             
-			            	              {
-			            	                  "ingles": "wanted",
-			            	                  "espanol": "querer"
-			            	              },
-			            	              {
-			            	                  "ingles": "broke",
-			            	                  "espanol": "romper"
-			            	              },
-			            	              {
-			            	                  "ingles": "brought",
-			            	                  "espanol": "traer"
-			            	              },
-			            	              {
-			            	                  "ingles": "caught",
-			            	                  "espanol": "agarrar"
-			            	              }
-			            	          ]
-			            	      }
 
-		);	
+	VerboIrregular.find(function(err, v) {
+			if (err)
+				res.send(err);
+
+			console.log("------->"+v+"#####-*-*-*-*-*");
+
+
+			var elementos = new Array();
+			v.forEach(function (obj) {
+			  
+			  elementos.push({"ingles": obj.pasado,"espanol": obj.traduccion});
+			});
+
+			res.jsonp( {"items": elementos} );
+
+		});
+
+	
 });
 
 // on routes that end in /bears
